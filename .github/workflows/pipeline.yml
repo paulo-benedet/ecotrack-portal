@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 22
       - name: Run HTMLHint
-        run : npm run lint
+        run: npm run lint
 
   test:
     name: Unit tests
