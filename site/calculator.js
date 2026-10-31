@@ -4,7 +4,7 @@
 // Emission factors in kg CO2e per unit. Illustrative values for teaching only.
 const FACTORS = {
 electricityKwh: 0.21, // per kWh of grid electricity
-carKm: 1.7, // per km in an average petrol car
+carKm: 0.17, // per km in an average petrol car
 busKm: 0.10 // per km travelled by bus
 };
 function calculateFootprint(electricityKwh, carKm, busKm) {
