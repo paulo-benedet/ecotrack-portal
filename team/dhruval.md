@@ -1,6 +1,6 @@
 # @dhruvalsinhmahida7128-web
 
-**Role:** QA and CI Engineer (S5)
+**Role:** QA and CI Engineer (Student 5)
 
 **What I want to learn from DevOps:** I want to learn how to set up automated CI/CD pipelines to test code automatically and ensure high software quality before it is deployed.
 
