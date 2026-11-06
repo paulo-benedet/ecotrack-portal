@@ -1,0 +1,49 @@
+
+name: Production Health Check
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  health:
+    name: Check the live site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request the live page
+        run: |
+          URL="https://paulo-benedet.github.io/ecotrack-portal/"
+          echo "Checking $URL"
+          RESULT=$(curl -s -o page.html -w "%{http_code} %{time_total}" "$URL")
+          echo "HTTP status and response time (seconds): $RESULT"
+          echo "### Health check report" >> "$GITHUB_STEP_SUMMARY"
+          echo "- URL: $URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Status and response time: $RESULT" >> "$GITHUB_STEP_SUMMARY"
+
+          case "$RESULT" in
+            200*) echo "Page returned 200 OK" ;;
+            *) echo "Site is not returning 200"; exit 1 ;;
+          esac
+
+          if ! grep -q 'name="ecotrack-health" content="ok"' page.html; then
+            echo "Health marker missing or not ok"
+            exit 1
+          fi
+
+          echo "Site is healthy"
+
+      - name: Open an incident issue if the check failed
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "INCIDENT: live site health check failed" \
+            --label incident \
+            --body "The health check failed. Logs:
+          $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
